@@ -327,7 +327,7 @@ export class RoomData {
 		return {
 			name: 'Ballroom',
 			color: ['blue'],
-			shape: RoomShape.FORK,
+			shape: RoomShape.LINE,
 		}
 	}
 
