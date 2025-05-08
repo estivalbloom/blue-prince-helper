@@ -238,7 +238,7 @@ export class RoomData {
 		return {
 			name: 'Guest Bedroom',
 			color: ['purple'],
-			shape: RoomShape.CORNER,
+			shape: RoomShape.DEAD_END,
 		}
 	}
 

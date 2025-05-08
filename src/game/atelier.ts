@@ -25,7 +25,7 @@ export function getAtelierData(): AtelierRoom[] {
 
 		{
 			data: RoomData.vestibule,
-			paintings: 'Win/wine',
+			paintings: 'Wine/Win',
 			mora: 'LIGHT',
 			rotation: 0,
 		},
@@ -109,7 +109,7 @@ export function getAtelierData(): AtelierRoom[] {
 
 		{
 			data: RoomData.den,
-			paintings: 'S?',
+			paintings: 'Spike/Pike',
 			mora: 'A',
 			rotation: 0,
 		},

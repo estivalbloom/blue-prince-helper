@@ -4,7 +4,7 @@
 			<div
 				class="room-container"
 				draggable="true"
-				v-for="(roomData, index) in rooms"
+				v-for="(roomData, index) in data.rooms"
 				@dragstart="(e) => handleStartDrag(e, index)"
 				@dragover="(e) => handleDragOver(e, index)"
 				@drop="(e) => handleDrop(e, index)"
@@ -35,6 +35,10 @@
 					scroll to rotate.
 				</p>
 			</div>
+			<h2>Mora Jai result:</h2>
+			<div class="sub-panel">
+				{{ moraJai }}
+			</div>
 			<h2>Options:</h2>
 			<div class="sub-panel option-panel">
 				<div>
@@ -61,18 +65,30 @@
 					/>
 					<label for="check-mora-jai">Show Mora Jai text on overlay</label>
 				</div>
-				<!-- <div>
+				<div>
 					<input
 						id="button-reset"
 						type="button"
 						@click="reset"
-						value="Reset"
+						value="Reset layout"
 					/>
-				</div> -->
-			</div>
-			<h2>Mora Jai result:</h2>
-			<div class="sub-panel">
-				{{ moraJai }}
+				</div>
+				<div class="data-button-panel">
+					<div>Save/Load layout:</div>
+					<input
+						id="button-export"
+						type="button"
+						value="Export"
+						@click="exportData"
+					/>
+					<input
+						id="button-import"
+						type="button"
+						value="Import"
+						@click="importData"
+					/>
+				</div>
+				<textarea ref="text-data"></textarea>
 			</div>
 		</div>
 	</div>
@@ -82,7 +98,7 @@
 import RoomDisplay from '@/components/RoomDisplay.vue'
 import { getAtelierData } from '@/game/atelier'
 import { Room } from '@/game/structures'
-import { computed, reactive, ref } from 'vue'
+import { computed, reactive, ref, useTemplateRef } from 'vue'
 
 function init() {
 	return getAtelierData().map((data) => {
@@ -93,7 +109,9 @@ function init() {
 	})
 }
 
-let rooms = reactive(init())
+const textArea = useTemplateRef('text-data')
+
+let data = reactive({ rooms: init() })
 
 const showOverlay = ref(true)
 const showNames = ref(true)
@@ -101,9 +119,9 @@ const showMora = ref(true)
 
 let lastIndex = -1
 function swap(index: number, otherIndex: number) {
-	const temp = rooms[index]
-	rooms[index] = rooms[otherIndex]
-	rooms[otherIndex] = temp
+	const temp = data.rooms[index]
+	data.rooms[index] = data.rooms[otherIndex]
+	data.rooms[otherIndex] = temp
 }
 
 function handleStartDrag(event: DragEvent, index: number) {
@@ -134,17 +152,59 @@ function handleScroll(event: WheelEvent, index: number) {
 		clearTimeout(id)
 	}
 	id = setTimeout(() => {
-		rooms[index].room.rotate(Math.sign(event.deltaY))
+		data.rooms[index].room.rotate(Math.sign(event.deltaY))
 	}, 35)
 }
 
 function reset() {
-	rooms = init()
+	data.rooms = init()
 }
 
 const moraJai = computed(() => {
-	return rooms.map((r) => r.data.mora).join(' ')
+	return data.rooms.map((r) => r.data.mora).join(' ')
 })
+
+type SaveData = {
+	n: string // Name
+	r: number // Rotation
+}
+
+function exportData() {
+	if (textArea.value) {
+		textArea.value.value = btoa(
+			JSON.stringify(
+				data.rooms.map((e): SaveData => {
+					return {
+						n: e.room.data.name,
+						r: e.room.rotation,
+					}
+				}),
+			),
+		)
+	}
+}
+
+function importData() {
+	if (textArea.value) {
+		const ateRoomList = getAtelierData()
+
+		try {
+			const saveData: SaveData[] = JSON.parse(atob(textArea.value.value))
+			data.rooms = saveData.map((d) => {
+				const ateRoom = ateRoomList.find((r) => r.data.name === d.n)
+				if (!ateRoom) {
+					throw new Error('Need rinsed vote')
+				}
+				return {
+					room: new Room(ateRoom.data, d.r),
+					data: ateRoom,
+				}
+			})
+		} catch (e) {
+			alert(`Invalid save data: ${e}`)
+		}
+	}
+}
 </script>
 
 <style scoped>
@@ -195,10 +255,20 @@ const moraJai = computed(() => {
 .option-panel {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 8px;
 }
 
 input[type='checkbox'] {
 	margin-right: 4px;
+}
+
+.data-button-panel {
+	display: flex;
+	gap: 4px;
+}
+
+textarea {
+	resize: none;
+	height: 128px;
 }
 </style>
