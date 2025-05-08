@@ -1,0 +1,24 @@
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+	margin: 0;
+	font-weight: normal;
+}
+
+html {
+	height: 100%;
+}
+
+body {
+	font-family:
+		'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva,
+		Verdana, sans-serif;
+
+	background-color: cornflowerblue;
+	height: 100%;
+}
+
+#app {
+	height: 100%;
+}
