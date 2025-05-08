@@ -174,7 +174,7 @@ export class RoomData {
 		return {
 			name: 'Aquarium',
 			color: ['blue', 'purple', 'green', 'red', 'yellow', 'orange', 'black'],
-			shape: RoomShape.CROSS,
+			shape: RoomShape.FORK,
 		}
 	}
 
