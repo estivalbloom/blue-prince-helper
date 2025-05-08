@@ -128,8 +128,14 @@ function handleDrop(event: DragEvent, index: number) {
 	event.preventDefault()
 }
 
+let id: number | undefined
 function handleScroll(event: WheelEvent, index: number) {
-	rooms[index].room.rotate(Math.sign(event.deltaY))
+	if (id) {
+		clearTimeout(id)
+	}
+	id = setTimeout(() => {
+		rooms[index].room.rotate(Math.sign(event.deltaY))
+	}, 35)
 }
 
 function reset() {
