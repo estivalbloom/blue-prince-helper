@@ -3,8 +3,8 @@
 		<div class="grid-container">
 			<div
 				class="room-container"
-				draggable="true"
 				v-for="(roomData, index) in data.rooms"
+				:draggable="true"
 				@dragstart="(e) => handleStartDrag(e, index)"
 				@dragover="(e) => handleDragOver(e, index)"
 				@drop="(e) => handleDrop(e, index)"
@@ -21,6 +21,12 @@
 						<div :class="{ hidden: !showMora }">
 							{{ roomData.data.mora }}
 						</div>
+						<Lock
+							:class="{
+								hidden: !roomData.locked,
+								lock: true,
+							}"
+						/>
 					</div>
 				</RoomDisplay>
 			</div>
@@ -67,6 +73,16 @@
 				</div>
 				<div>
 					<input
+						id="check-lock-board"
+						type="checkbox"
+						v-model="lockBoard"
+					/>
+					<label for="check-lock-board">
+						Lock the rooms positioned on the door blueprint
+					</label>
+				</div>
+				<div>
+					<input
 						id="button-reset"
 						type="button"
 						@click="reset"
@@ -96,16 +112,29 @@
 
 <script setup lang="ts">
 import RoomDisplay from '@/components/RoomDisplay.vue'
-import { getAtelierData } from '@/game/atelier'
+import { getAtelierData, type AtelierRoom } from '@/game/atelier'
 import { Room } from '@/game/structures'
 import { computed, reactive, ref, useTemplateRef } from 'vue'
+import { Lock } from '@iconoir/vue'
+
+class RoomItem {
+	room: Room
+	data: AtelierRoom
+
+	constructor(room: Room, data: AtelierRoom) {
+		this.room = room
+		this.data = data
+	}
+
+	get locked() {
+		return lockBoard.value && !!this.data.onBoard
+	}
+}
 
 function init() {
 	return getAtelierData().map((data) => {
-		return {
-			room: new Room(data.data, data.rotation),
-			data,
-		}
+		const room = new Room(data.data, data.rotation)
+		return new RoomItem(room, data)
 	})
 }
 
@@ -116,6 +145,7 @@ let data = reactive({ rooms: init() })
 const showOverlay = ref(true)
 const showNames = ref(true)
 const showMora = ref(true)
+const lockBoard = ref(true)
 
 let lastIndex = -1
 function swap(index: number, otherIndex: number) {
@@ -125,6 +155,11 @@ function swap(index: number, otherIndex: number) {
 }
 
 function handleStartDrag(event: DragEvent, index: number) {
+	if (data.rooms[index].locked) {
+		event.preventDefault()
+		return
+	}
+
 	if (event.dataTransfer && event.target) {
 		event.dataTransfer.clearData()
 		event.dataTransfer.setData('text/plain', `${index}`)
@@ -133,6 +168,10 @@ function handleStartDrag(event: DragEvent, index: number) {
 }
 
 function handleDragOver(event: DragEvent, index: number) {
+	if (data.rooms[index].locked) {
+		return
+	}
+
 	event.preventDefault()
 	if (event.dataTransfer && event.target) {
 		const otherIndex = Number.parseInt(event.dataTransfer.getData('text/plain'))
@@ -143,6 +182,10 @@ function handleDragOver(event: DragEvent, index: number) {
 }
 
 function handleDrop(event: DragEvent, index: number) {
+	if (data.rooms[index].locked) {
+		return
+	}
+
 	event.preventDefault()
 }
 
@@ -195,10 +238,8 @@ function importData() {
 				if (!ateRoom) {
 					throw new Error('Need rinsed vote')
 				}
-				return {
-					room: new Room(ateRoom.data, d.r),
-					data: ateRoom,
-				}
+				const room = new Room(ateRoom.data, d.r)
+				return new RoomItem(room, ateRoom)
 			})
 		} catch (e) {
 			alert(`Invalid save data: ${e}`)
@@ -270,5 +311,11 @@ input[type='checkbox'] {
 textarea {
 	resize: none;
 	height: 128px;
+}
+
+.lock {
+	position: absolute;
+	bottom: 0px;
+	right: 0px;
 }
 </style>

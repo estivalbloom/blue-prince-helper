@@ -5,6 +5,7 @@ export type AtelierRoom = {
 	paintings: string
 	mora: string
 	rotation: number
+	onBoard?: boolean
 }
 
 export function getAtelierData(): AtelierRoom[] {
@@ -56,6 +57,7 @@ export function getAtelierData(): AtelierRoom[] {
 			paintings: 'Year/Ear',
 			mora: 'A',
 			rotation: 2,
+			onBoard: true,
 		},
 
 		{
@@ -168,6 +170,7 @@ export function getAtelierData(): AtelierRoom[] {
 			paintings: 'Stream/Steam',
 			mora: 'A',
 			rotation: 0,
+			onBoard: true,
 		},
 
 		{
@@ -175,6 +178,7 @@ export function getAtelierData(): AtelierRoom[] {
 			paintings: 'Boar/Bar',
 			mora: 'SHADE',
 			rotation: 1,
+			onBoard: true,
 		},
 
 		{
@@ -196,6 +200,7 @@ export function getAtelierData(): AtelierRoom[] {
 			paintings: 'Pier/Pie',
 			mora: 'TO',
 			rotation: 0,
+			onBoard: true,
 		},
 
 		{
@@ -203,6 +208,7 @@ export function getAtelierData(): AtelierRoom[] {
 			paintings: 'Spear/Spar',
 			mora: 'PASS',
 			rotation: 1,
+			onBoard: true,
 		},
 
 		{
@@ -210,6 +216,7 @@ export function getAtelierData(): AtelierRoom[] {
 			paintings: 'Post/Pot',
 			mora: 'THE',
 			rotation: 0,
+			onBoard: true,
 		},
 
 		{
@@ -224,6 +231,7 @@ export function getAtelierData(): AtelierRoom[] {
 			paintings: 'Tarot/Trot',
 			mora: 'THROUGH',
 			rotation: 1,
+			onBoard: true,
 		},
 
 		{
@@ -273,6 +281,7 @@ export function getAtelierData(): AtelierRoom[] {
 			paintings: 'Weight/Eight',
 			mora: 'SEEK',
 			rotation: 0,
+			onBoard: true,
 		},
 
 		{

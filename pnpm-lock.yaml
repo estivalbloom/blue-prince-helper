@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@iconoir/vue':
+        specifier: ^7.11.0
+        version: 7.11.0(vue@3.5.13(typescript@5.8.3))
       vue:
         specifier: ^3.5.13
         version: 3.5.13(typescript@5.8.3)
@@ -343,6 +346,11 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@iconoir/vue@7.11.0':
+    resolution: {integrity: sha512-o768Cu9nayRcxryYElKmfRLBOfY26xVKB4T8z+ppJnEWy2QiDLIs8NJVc53HGvTsrfn7JC7+uu32ZUdFpx4m6A==}
+    peerDependencies:
+      vue: '3'
 
   '@jridgewell/gen-mapping@0.3.8':
     resolution: {integrity: sha512-imAbBGkb+ebQyxKgzv5Hu2nmROxoDOXHh80evxdoXNOrvAnVx7zimzc1Oo5h9RlfV4vPXaE2iM5pOFbvOCClWA==}
@@ -1359,6 +1367,10 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.4':
     optional: true
+
+  '@iconoir/vue@7.11.0(vue@3.5.13(typescript@5.8.3))':
+    dependencies:
+      vue: 3.5.13(typescript@5.8.3)
 
   '@jridgewell/gen-mapping@0.3.8':
     dependencies:
