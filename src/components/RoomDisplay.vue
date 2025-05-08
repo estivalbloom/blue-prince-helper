@@ -14,8 +14,8 @@
 			<div :class="{ bottom: !room.doors.south }"></div>
 			<div class="bottom-right"></div>
 		</div>
-		<div class="name">
-			{{ room.data.name }}
+		<div :class="{ overlay: true, hidden: !overlay }">
+			<slot></slot>
 		</div>
 	</div>
 </template>
@@ -26,6 +26,7 @@ import { computed, onMounted, useTemplateRef } from 'vue'
 
 const props = defineProps<{
 	room: Room
+	overlay: boolean
 }>()
 
 const color = computed(() => {
@@ -42,16 +43,13 @@ const color = computed(() => {
 	width: 100%;
 }
 
-.name {
+.overlay {
 	position: absolute;
-	background: #00000080;
-	color: white;
-	height: 50%;
+	background: #00000040;
 	top: 0px;
 	left: 0px;
 	right: 0px;
-	padding: 12px;
-	font-size: 12px;
+	bottom: 0px;
 }
 
 .door-grid {
