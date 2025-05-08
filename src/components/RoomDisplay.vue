@@ -30,7 +30,31 @@ const props = defineProps<{
 }>()
 
 const color = computed(() => {
-	return `${props.room.data.color.at(0)}`
+	const colors = props.room.data.color.map((c) => {
+		if (c == 'blue') {
+			return 'royalblue'
+		}
+		if (c == 'red') {
+			return 'firebrick'
+		}
+		if (c == 'orange') {
+			return 'goldenrod'
+		}
+		if (c == 'yellow') {
+			return 'gold'
+		}
+		if (c == 'purple') {
+			return 'indigo'
+		}
+		return c
+	})
+	if (colors.length == 1) {
+		return colors[0]
+	}
+	if (colors.length == 2) {
+		return `linear-gradient(46deg,${colors[0]} 30%, ${colors[1]} 70%)`
+	}
+	return `linear-gradient(46deg, red 10%, orange, yellow, green, blue, purple 90%)`
 })
 </script>
 
