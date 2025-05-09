@@ -21,6 +21,9 @@
 						<div :class="{ hidden: !showMora }">
 							{{ roomData.data.mora }}
 						</div>
+						<div :class="{ hidden: !showPaint }">
+							{{ roomData.data.letter }}
+						</div>
 						<Lock
 							:class="{
 								hidden: !roomData.locked,
@@ -45,8 +48,12 @@
 			<div class="sub-panel">
 				{{ moraJai }}
 			</div>
-			<h2>Transformations</h2>
+			<h2>Painting result:</h2>
 			<div class="sub-panel">
+				{{ paintings }}
+			</div>
+			<h2>Transformations</h2>
+			<div class="sub-panel transform-panel">
 				<div>
 					<input
 						type="button"
@@ -143,6 +150,14 @@
 					/>
 					<label for="check-mora-jai">Show Mora Jai text on overlay</label>
 				</div>
+				<div>
+					<input
+						id="check-paint"
+						type="checkbox"
+						v-model="showMora"
+					/>
+					<label for="check-paint">Show painting letter on overlay</label>
+				</div>
 				<!-- <div>
 					<input
 						id="check-lock-board"
@@ -228,6 +243,7 @@ let data = reactive({ rooms: init() })
 const showOverlay = ref(true)
 const showNames = ref(true)
 const showMora = ref(true)
+const showPaint = ref(true)
 const lockBoard = ref(false)
 const lockEnds = ref(false)
 
@@ -289,6 +305,21 @@ function reset() {
 
 const moraJai = computed(() => {
 	return data.rooms.map((r) => r.data.mora).join(' ')
+})
+
+const paintings = computed(() => {
+	return data.rooms
+		.reduce<string[][]>(
+			(acc: string[][], next: RoomItem, idx: number) => {
+				acc[Math.floor(idx / 5)].push(next.data.letter)
+				return acc
+			},
+			Array(9)
+				.fill(null)
+				.map(() => []),
+		)
+		.map((e) => e.join(''))
+		.join(' ')
 })
 
 type SaveData = {
@@ -399,8 +430,6 @@ function vFlip() {
 function spinRooms() {
 	data.rooms.forEach((e) => e.room.rotate(1))
 }
-
-function spinHouse() {}
 </script>
 
 <style scoped>
@@ -425,7 +454,7 @@ function spinHouse() {}
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
-	padding: 16px;
+	padding: 12px 16px;
 	font-size: 12px;
 	justify-content: space-between;
 	height: 100%;
@@ -448,6 +477,16 @@ function spinHouse() {}
 	border-radius: 4px;
 }
 
+.transform-panel {
+	display: grid;
+	grid-template-columns: auto auto;
+	gap: 8px;
+}
+
+.transform-panel input {
+	width: 100%;
+}
+
 .option-panel {
 	display: flex;
 	flex-direction: column;
@@ -465,7 +504,6 @@ input[type='checkbox'] {
 
 textarea {
 	resize: none;
-	height: 128px;
 }
 
 .lock {
