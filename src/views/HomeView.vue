@@ -143,13 +143,15 @@
 					/>
 					<label for="check-mora-jai">Show Mora Jai text on overlay</label>
 				</div>
-				<div>
+				<!-- <div>
 					<input
 						id="check-lock-board"
 						type="checkbox"
 						v-model="lockBoard"
 					/>
-					<label for="check-lock-board">Lock the rooms shown on the door blueprint</label>
+					<label for="check-lock-board">
+						Lock the rooms shown on the door blueprint (doesn't affect transformations)
+					</label>
 				</div>
 				<div>
 					<input
@@ -157,8 +159,10 @@
 						type="checkbox"
 						v-model="lockEnds"
 					/>
-					<label for="check-lock-ends">Lock the Entrance Hall and Vestibule</label>
-				</div>
+					<label for="check-lock-ends">
+						Lock the Entrance Hall and Vestibule (doesn't affect transformations)
+					</label>
+				</div> -->
 				<div>
 					<input
 						id="button-reset"
@@ -224,8 +228,8 @@ let data = reactive({ rooms: init() })
 const showOverlay = ref(true)
 const showNames = ref(true)
 const showMora = ref(true)
-const lockBoard = ref(true)
-const lockEnds = ref(true)
+const lockBoard = ref(false)
+const lockEnds = ref(false)
 
 let lastIndex = -1
 function swap(index: number, otherIndex: number) {
