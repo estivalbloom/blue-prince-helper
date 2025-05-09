@@ -6,6 +6,7 @@ export type AtelierRoom = {
 	mora: string
 	rotation: number
 	onBoard?: boolean
+	isEnd?: boolean
 }
 
 export function getAtelierData(): AtelierRoom[] {
@@ -29,6 +30,7 @@ export function getAtelierData(): AtelierRoom[] {
 			paintings: 'Wine/Win',
 			mora: 'LIGHT',
 			rotation: 0,
+			isEnd: true,
 		},
 
 		{
@@ -317,6 +319,7 @@ export function getAtelierData(): AtelierRoom[] {
 			paintings: 'Cane/Can',
 			mora: 'LIES',
 			rotation: 2,
+			isEnd: true,
 		},
 
 		{

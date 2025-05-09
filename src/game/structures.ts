@@ -1,3 +1,5 @@
+import { mod } from '@/util'
+
 /**
  * Columns start at 1 for the west wing, ending at 5 for the east wing.
  */
@@ -32,17 +34,6 @@ export enum RoomShape {
 	NONE,
 }
 
-/**
- * Because javascript doesn't have a modulus operator
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Remainder#description
- * @param a
- * @param b
- * @returns a mod b
- */
-function mod(a: number, b: number) {
-	return ((a % b) + b) % b
-}
-
 export class DoorList {
 	north: boolean
 	east: boolean
@@ -70,7 +61,7 @@ export class DoorList {
 	 * @returns
 	 */
 	rotated(rotation: number) {
-		const r = this.toArray().map((_el, idx, doors) => doors[mod(idx + rotation, 4)])
+		const r = this.toArray().map((_el, idx, doors) => doors[mod(idx - rotation, 4)])
 		return DoorList.fromArray(r)
 	}
 

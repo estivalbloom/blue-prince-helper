@@ -45,6 +45,78 @@
 			<div class="sub-panel">
 				{{ moraJai }}
 			</div>
+			<h2>Transformations</h2>
+			<div class="sub-panel">
+				<div>
+					<input
+						type="button"
+						id="button-rshift"
+						value="Shift Right"
+						@click="shiftRight"
+					/>
+				</div>
+				<div>
+					<input
+						type="button"
+						id="button-lshift"
+						value="Shift Left"
+						@click="shiftLeft"
+					/>
+				</div>
+				<div>
+					<input
+						type="button"
+						id="button-ushift"
+						value="Shift Up"
+						@click="shiftUp"
+					/>
+				</div>
+				<div>
+					<input
+						type="button"
+						id="button-dshift"
+						value="Shift Down"
+						@click="shiftDown"
+					/>
+				</div>
+				<div>
+					<input
+						type="button"
+						id="button-hflip"
+						value="Flip Horizontal"
+						@click="hFlip"
+					/>
+				</div>
+				<div>
+					<input
+						type="button"
+						id="button-vflip"
+						value="Flip Vertical"
+						@click="vFlip"
+					/>
+				</div>
+				<div>
+					<input
+						type="button"
+						id="button-rot"
+						value="Rotate House 180"
+						@click="
+							() => {
+								hFlip()
+								vFlip()
+							}
+						"
+					/>
+				</div>
+				<div>
+					<input
+						type="button"
+						id="button-rot"
+						value="Rotate Rooms 90"
+						@click="spinRooms"
+					/>
+				</div>
+			</div>
 			<h2>Options:</h2>
 			<div class="sub-panel option-panel">
 				<div>
@@ -77,9 +149,15 @@
 						type="checkbox"
 						v-model="lockBoard"
 					/>
-					<label for="check-lock-board">
-						Lock the rooms positioned on the door blueprint
-					</label>
+					<label for="check-lock-board">Lock the rooms shown on the door blueprint</label>
+				</div>
+				<div>
+					<input
+						id="check-lock-ends"
+						type="checkbox"
+						v-model="lockEnds"
+					/>
+					<label for="check-lock-ends">Lock the Entrance Hall and Vestibule</label>
 				</div>
 				<div>
 					<input
@@ -116,6 +194,7 @@ import { getAtelierData, type AtelierRoom } from '@/game/atelier'
 import { Room } from '@/game/structures'
 import { computed, reactive, ref, useTemplateRef } from 'vue'
 import { Lock } from '@iconoir/vue'
+import { mod } from '@/util'
 
 class RoomItem {
 	room: Room
@@ -127,7 +206,7 @@ class RoomItem {
 	}
 
 	get locked() {
-		return lockBoard.value && !!this.data.onBoard
+		return (lockBoard.value && !!this.data.onBoard) || (lockEnds.value && this.data.isEnd)
 	}
 }
 
@@ -146,6 +225,7 @@ const showOverlay = ref(true)
 const showNames = ref(true)
 const showMora = ref(true)
 const lockBoard = ref(true)
+const lockEnds = ref(true)
 
 let lastIndex = -1
 function swap(index: number, otherIndex: number) {
@@ -246,6 +326,77 @@ function importData() {
 		}
 	}
 }
+
+function idxToPos(idx: number) {
+	const y = Math.floor(idx / 5)
+	const x = Math.floor(idx % 5)
+	return [x, y]
+}
+
+function posToIdx(x: number, y: number) {
+	return y * 5 + x
+}
+
+function shiftRight() {
+	data.rooms = data.rooms.map((_e, idx, arr) => {
+		const pos = idxToPos(idx)
+		const newX = mod(pos[0] - 1, 5)
+		const newIdx = posToIdx(newX, pos[1])
+		return arr[newIdx]
+	})
+}
+
+function shiftLeft() {
+	data.rooms = data.rooms.map((_e, idx, arr) => {
+		const pos = idxToPos(idx)
+		const newX = mod(pos[0] + 1, 5)
+		const newIdx = posToIdx(newX, pos[1])
+		return arr[newIdx]
+	})
+}
+
+function shiftUp() {
+	data.rooms = data.rooms.map((_e, idx, arr) => {
+		const pos = idxToPos(idx)
+		const newY = mod(pos[1] + 1, 9)
+		const newIdx = posToIdx(pos[0], newY)
+		console.log(`${idx}, ${pos}, ${newY}, ${newIdx}`)
+		return arr[newIdx]
+	})
+}
+
+function shiftDown() {
+	data.rooms = data.rooms.map((_e, idx, arr) => {
+		const pos = idxToPos(idx)
+		const newY = mod(pos[1] - 1, 9)
+		const newIdx = posToIdx(pos[0], newY)
+		return arr[newIdx]
+	})
+}
+
+function hFlip() {
+	data.rooms = data.rooms.map((_e, idx, arr) => {
+		const pos = idxToPos(idx)
+		const newX = 4 - pos[0]
+		const newIdx = posToIdx(newX, pos[1])
+		return arr[newIdx]
+	})
+}
+
+function vFlip() {
+	data.rooms = data.rooms.map((_e, idx, arr) => {
+		const pos = idxToPos(idx)
+		const newY = 8 - pos[1]
+		const newIdx = posToIdx(pos[0], newY)
+		return arr[newIdx]
+	})
+}
+
+function spinRooms() {
+	data.rooms.forEach((e) => e.room.rotate(1))
+}
+
+function spinHouse() {}
 </script>
 
 <style scoped>
