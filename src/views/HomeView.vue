@@ -123,6 +123,44 @@
 						@click="spinRooms"
 					/>
 				</div>
+				<div class="shift-section">
+					<div>
+						Shift row right:
+						<input  
+						v-for="i in 9"  
+						type="button"
+						:value="i"
+						@click="() => shiftRow(i - 1, 1)"
+						>
+					</div>
+					<div>
+						Shift row left:
+						<input  
+						v-for="i in 9"  
+						type="button"
+						:value="i"
+						@click="() => shiftRow(i - 1, -1)"
+						>
+					</div>
+					<div>
+						Shift col down:
+						<input  
+						v-for="i in 5"  
+						type="button"
+						:value="i"
+						@click="() => shiftCol(i - 1, 1)"
+						>
+					</div>
+					<div>
+						Shift col up:
+						<input  
+						v-for="i in 5"  
+						type="button"
+						:value="i"
+						@click="() => shiftCol(i - 1, -1)"
+						>
+					</div>
+				</div>
 			</div>
 			<h2>Options:</h2>
 			<div class="sub-panel option-panel">
@@ -134,7 +172,7 @@
 					/>
 					<label for="check-overlay">Show overlay</label>
 				</div>
-				<div>
+				<!-- <div>
 					<input
 						id="check-name"
 						type="checkbox"
@@ -157,7 +195,7 @@
 						v-model="showMora"
 					/>
 					<label for="check-paint">Show painting letter on overlay</label>
-				</div>
+				</div> -->
 				<!-- <div>
 					<input
 						id="check-lock-board"
@@ -365,7 +403,7 @@ function importData() {
 function idxToPos(idx: number) {
 	const y = Math.floor(idx / 5)
 	const x = Math.floor(idx % 5)
-	return [x, y]
+	return {x, y}
 }
 
 function posToIdx(x: number, y: number) {
@@ -375,8 +413,8 @@ function posToIdx(x: number, y: number) {
 function shiftRight() {
 	data.rooms = data.rooms.map((_e, idx, arr) => {
 		const pos = idxToPos(idx)
-		const newX = mod(pos[0] - 1, 5)
-		const newIdx = posToIdx(newX, pos[1])
+		const newX = mod(pos.x - 1, 5)
+		const newIdx = posToIdx(newX, pos.y)
 		return arr[newIdx]
 	})
 }
@@ -384,8 +422,8 @@ function shiftRight() {
 function shiftLeft() {
 	data.rooms = data.rooms.map((_e, idx, arr) => {
 		const pos = idxToPos(idx)
-		const newX = mod(pos[0] + 1, 5)
-		const newIdx = posToIdx(newX, pos[1])
+		const newX = mod(pos.x + 1, 5)
+		const newIdx = posToIdx(newX, pos.y)
 		return arr[newIdx]
 	})
 }
@@ -393,8 +431,8 @@ function shiftLeft() {
 function shiftUp() {
 	data.rooms = data.rooms.map((_e, idx, arr) => {
 		const pos = idxToPos(idx)
-		const newY = mod(pos[1] + 1, 9)
-		const newIdx = posToIdx(pos[0], newY)
+		const newY = mod(pos.y + 1, 9)
+		const newIdx = posToIdx(pos.x, newY)
 		console.log(`${idx}, ${pos}, ${newY}, ${newIdx}`)
 		return arr[newIdx]
 	})
@@ -403,8 +441,8 @@ function shiftUp() {
 function shiftDown() {
 	data.rooms = data.rooms.map((_e, idx, arr) => {
 		const pos = idxToPos(idx)
-		const newY = mod(pos[1] - 1, 9)
-		const newIdx = posToIdx(pos[0], newY)
+		const newY = mod(pos.y - 1, 9)
+		const newIdx = posToIdx(pos.x, newY)
 		return arr[newIdx]
 	})
 }
@@ -412,8 +450,8 @@ function shiftDown() {
 function hFlip() {
 	data.rooms = data.rooms.map((_e, idx, arr) => {
 		const pos = idxToPos(idx)
-		const newX = 4 - pos[0]
-		const newIdx = posToIdx(newX, pos[1])
+		const newX = 4 - pos.x
+		const newIdx = posToIdx(newX, pos.y)
 		return arr[newIdx]
 	})
 }
@@ -421,8 +459,8 @@ function hFlip() {
 function vFlip() {
 	data.rooms = data.rooms.map((_e, idx, arr) => {
 		const pos = idxToPos(idx)
-		const newY = 8 - pos[1]
-		const newIdx = posToIdx(pos[0], newY)
+		const newY = 8 - pos.y
+		const newIdx = posToIdx(pos.x, newY)
 		return arr[newIdx]
 	})
 }
@@ -430,9 +468,41 @@ function vFlip() {
 function spinRooms() {
 	data.rooms.forEach((e) => e.room.rotate(1))
 }
+
+function shiftRow(r: number, amt: number) {
+	data.rooms = data.rooms.map((e, idx, arr) => {
+		const pos = idxToPos(idx);
+		if (pos.y == r) {
+			const newX = mod(pos.x - amt, 5);
+			const newIdx = posToIdx(newX, pos.y);
+			return arr[newIdx];
+		}
+		return e
+	})
+}
+
+function shiftCol(c: number, amt: number) {
+	data.rooms = data.rooms.map((e, idx, arr) => {
+		const pos = idxToPos(idx);
+		if (pos.x == c) {
+			const newY = mod(pos.y - amt, 9);
+			const newIdx = posToIdx(pos.x, newY);
+			return arr[newIdx];
+		}
+		return e
+	})
+}
 </script>
 
 <style scoped>
+h1 {
+	font-size: 24px;
+}
+
+h2 {
+	font-size: 18px;
+}
+
 .page-container {
 	display: flex;
 	gap: 12px;
@@ -468,7 +538,7 @@ function spinRooms() {
 	background-color: #ffffff60;
 	padding: 12px;
 	border-radius: 4px;
-	gap: 12px;
+	gap: 8px;
 }
 
 .sub-panel {
@@ -491,6 +561,15 @@ function spinRooms() {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+}
+
+.shift-section {
+	grid-column: 1 / span 2;
+}
+
+.shift-section div {
+	display: grid;
+	grid-template-columns: 120px 28px 28px 28px 28px 28px 28px 28px 28px 28px;
 }
 
 input[type='checkbox'] {
