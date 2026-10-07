@@ -55,8 +55,8 @@ export function getAtelierData(): AtelierRoom[] {
 
 		{
 			data: RoomData.foyer,
-			paintings: '?',
-			letter: '?',
+			paintings: 'Novel/Noel',
+			letter: 'V',
 			mora: 'CAST',
 			rotation: 1,
 		},
